@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>FlightSurety</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="#">FlightSurety</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </nav>
+
+    <main class="container" style="background-image: url('flight.jpg');">
+		<br />
+		<br />
+		<br />
+		<h1>Airlines</h1>
+		<div class="col-sm-12">
+		<div class="card bg-light">
+		  <div class="card-body">
+			  <h2 class="card-title" style="color:rgb(0,0,0)">Operational status</h2>
+			  <div class="btn-wrapper">
+			  <button class="btn btn-primary" id="check-operational">Check operational status</button>
+			  </div>
+			  <div class="input-wrapper">
+			  <input type="text" id="opstatus" readonly>
+			  </div>
+			  <div class="btn-wrapper">
+				<button class="btn btn-primary" id="switch-operational" disabled>Switch On/Off</button>
+			  </div>
+		  </div>
+		</div>
+		</div>
+		<br />
+		<div class="col-sm-12">
+		<div class="card bg-light">
+			<div class="card-body">
+			  <h2 class="card-title" style="color:rgb(0,0,0)">Register airline</h2>
+			  <div class="input-wrapper">
+			  <input type="text" id="inp-reg-airline" placeholder="Airline address">
+			  </div>
+			  <div class="btn-wrapper">
+				<button class="btn btn-primary" id="btn-reg-airline" disabled>Register</button>
+			  </div>
+			</div>
+		</div>
+		</div>
+		<br />
+		<div class="col-sm-12">
+		<div class="card bg-light">
+			<div class="card-body">
+			  <h2 class="card-title" style="color:rgb(0,0,0)">Fund airline</h2>
+			  <div class="input-wrapper">
+			  <input type="text" id="inp-fund-airline" placeholder="Airline address">
+			  </div>
+			  <h5>10 ETH</h5>	
+			  <div class="btn-wrapper">
+				<button class="btn btn-primary" id="btn-fund-airline" disabled>Fund</button>
+			  </div>
+			</div>
+		</div>
+		</div>
+		<br />
+		<div class="col-sm-12">
+		<div class="card bg-light">
+			<div class="card-body">
+			  <h2 class="card-title" style="color:rgb(0,0,0)">Register flight</h2>
+			  <div class="input-wrapper">
+			  <input type="text" id="reg-flightid" placeholder="Flight Id">
+			  <input type="text" id="reg-origin" placeholder="From:">
+			  <input type="text" id="reg-destination" placeholder="To:">
+			  </div>
+			  <div class="btn-wrapper">
+				<button class="btn btn-primary" id="btn-reg-flight" disabled>Register</button>
+			  </div>
+			</div>
+		</div>
+		</div>
+		<h1>Passengers</h1>
+		<div class="col-sm-12">
+		<div class="card bg-light">
+			<div class="card-body">
+			  <h2 class="card-title" style="color:rgb(0,0,0)">Buy insurance</h2>
+			  <div class="input-wrapper">
+			  <input type="text" id="ins-flightid" placeholder="Flight Id">
+			  </div>
+			  <div class="input-group mb-2">
+				<div class="input-group-prepend">
+				   <div class="input-group-text">ETH</div>
+				</div>
+				<input type="number" id="ins-amount" min="0" max="1" step=".1" placeholder="0-1">
+			  </div>
+			  <div class="btn-wrapper">
+				<button class="btn btn-primary" id="btn-buy-insurance" disabled>Buy insurance</button>
+			  </div>
+		    </div>
+		</div>
+		</div>
+		<br />
+		<div class="col-sm-12">
+		<div class="card bg-light">
+			<div class="card-body">
+			  <h2 class="card-title" style="color:rgb(0,0,0)">Withdraw funds</h2>
+			  <div class="btn-wrapper">
+			  <button class="btn btn-primary" id="btn-view-funds">View withdrawable funds</button>
+			  </div>
+			  <div class="input-wrapper">
+			  <input type="text" id="withdrawable-funds" readonly>
+			  </div>
+			  <div class="btn-wrapper">
+				<button class="btn btn-primary" id="btn-withdraw" disabled>Withdraw</button>
+			  </div>
+			</div>
+		</div>
+		</div>
+    </main>
+
+</body>
+
+</html>
