@@ -51,7 +51,7 @@ export default class Contract {
             .call({ from: self.owner}, callback);
 	}
 	
-	registerAirline(airline, departureLocation, arrivalLocation, callback) {
+	registerAirline(airline, callback) {
 		let self = this;
 		self.flightSuretyApp.methods
             .registerAirline(airline,departureLocation,arrivalLocation)
@@ -65,7 +65,7 @@ export default class Contract {
             .call({ from: this.Account}, callback);			
 	}
 	
-	registerFlight(flightId, callback) { // TODO: ajouter origine et destination
+	registerFlight(flightId, departureLocation, arrivalLocation, callback) {
 		let self = this;
 		self.flightSuretyApp.methods
             .registerFlight(flightId)
