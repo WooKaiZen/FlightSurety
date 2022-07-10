@@ -213,7 +213,8 @@ contract FlightSuretyApp {
 							requireIsFunded(msg.sender)
 							requireIsNotRegistered(airlineAddress) // candidate airline
 							requireHasNotVotedYet(airlineAddress)
-    {
+							returns(bool)
+    {	
 		if (nbAirlinesRegistered < 4){
 			flightSuretyData.registerAirline(airlineAddress); // TODO: test/check for failures
 			registeredAirlines[airlineAddress] = Airline(true,false,nbAirlines);
@@ -246,7 +247,7 @@ contract FlightSuretyApp {
 			}
 		}
     }
-	
+		
 	function getAirlineNbVoters(address airlineAddress) external view returns(uint256)
 	{
 		return airlinesVoters[airlineAddress].length;
