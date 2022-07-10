@@ -9,7 +9,7 @@ let config = Config['localhost'];
 let web3 = new Web3(new Web3.providers.WebsocketProvider(config.url.replace('http', 'ws')));
 web3.eth.defaultAccount = web3.eth.accounts[0];
 let flightSuretyApp = new web3.eth.Contract(FlightSuretyApp.abi, config.appAddress);
-let flightSuretyData = new web3.eth.Contract(FlightSuretyData.abi, config.dataAddress;
+let flightSuretyData = new web3.eth.Contract(FlightSuretyData.abi, config.dataAddress);
 const accounts = web3.eth.getAccounts();
 let oracles = [];
 let oraclesIndexes = [];
@@ -75,7 +75,7 @@ flightSuretyApp.events.FlightStatusInfo({
       console.log(error);
     } 
     console.log(event);
-}
+});
 
 flightSuretyApp.events.OracleReport({
     fromBlock: "latest"
@@ -84,16 +84,10 @@ flightSuretyApp.events.OracleReport({
       console.log(error);
     } 
     console.log(event);
-}
+});
 
-async function submitOracleResponse (                            
-										uint8 index,
-										address airline,
-										string flight,
-										uint256 timestamp,
-										uint8 statusCode
-										uint256 oracleIndex) {
-	flightSuretyApp.methods.submitOracleResponse(index,airline,flight,timestamp,statusCode).call({from: oracles[oracleIndex], gas: 10000000});
+async function submitOracleResponse(index,airline,flight,timestamp,statusCode,oracleIndex) {
+	await flightSuretyApp.methods.submitOracleResponse(index,airline,flight,timestamp,statusCode).call({from: oracles[oracleIndex], gas: 10000000});
 }
 
 const app = express();
