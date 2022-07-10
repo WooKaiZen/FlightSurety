@@ -21,11 +21,13 @@ export default class Contract {
         this.web3.eth.getAccounts((error, accts) => {
            
             this.owner = accts[0];
+			console.log("Owner:",this.owner);
 			this.account = accts[1];
 
             let counter = 1;
             
             while(this.airlines.length < 5) {
+				console.log("Airline:",accts[counter]);
                 this.airlines.push(accts[counter++]);
             }
 
@@ -51,24 +53,36 @@ export default class Contract {
             .call({ from: self.owner}, callback);
 	}
 	
-	registerAirline(airline, callback) {
+	async registerAirline(airline, callback) {
 		let self = this;
-		self.flightSuretyApp.methods
-            .registerAirline(airline,departureLocation,arrivalLocation)
-            .call({ from: this.Account}, callback);		
+		await self.flightSuretyApp.methods
+            .registerAirline(airline)
+            .call({ from: this.Account}, callback);
+			/*.then(await self.flightSuretyData.methods.isRegistered(airline)
+			.call({ from: this.Account}, callback)
+			.then(p=>console.log(p)));*/
 	}
 	
-	airlineInitialFunding(callback) {
+	/*isAirlineRegistered(airline, callback) {
 		let self = this;
-		self.flightSuretyApp.methods
-            .airlineInitialFunding()
+		let reg = await self.flightSuretyData.methods.isRegistered(airline);
+		return reg;
+	}*/
+	
+	async airlineInitialFunding(airline, callback) {
+		let self = this;
+		self.flightSuretyData.methods
+            .fund(airline, this.web3.utils.toWei("10", "ether").toString())
             .call({ from: this.Account}, callback);			
+		/*await self.flightSuretyData.methods.isRegistered(airline)
+			.call({ from: this.Account}, callback);*/
+		//	.then(b=>console.log(b));
 	}
 	
 	registerFlight(flightId, departureLocation, arrivalLocation, callback) {
 		let self = this;
 		self.flightSuretyApp.methods
-            .registerFlight(flightId)
+            .registerFlight(flightId,departureLocation,arrivalLocation)
             .call({ from: this.Account}, callback);			
 	}
 
@@ -88,11 +102,10 @@ export default class Contract {
 	
 	buyInsurance(flight, amount, callback) {
         let self = this;
+		console.log(flight,this.web3.utils.toWei(amount, "ether").toString());
         self.flightSuretyData.methods
-            .buyInsurance(flight,amount)
-            .send({ from: self.owner}, (error, result) => {
-                callback(error, payload);
-            });
+            .buyInsurance(flight,this.web3.utils.toWei(amount, "ether").toString())
+            .call({ from: self.owner}, callback);
 	}
 	
 	getWithdrawableFunds(callback) {
