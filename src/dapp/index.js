@@ -2,12 +2,12 @@
 import DOM from './dom';
 import Contract from './contract';
 import './flightsurety.css';
-
+const Web3 = require('web3');
 
 (async() => {
 
     let result = null;
-
+	let web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
     let contract = new Contract('localhost', () => {
 
         // Read transaction
@@ -18,28 +18,32 @@ import './flightsurety.css';
 		
 		// Operational status
         DOM.elid('check-operational').addEventListener('click', () => {
-            contract.isOperational(async (error, result) => {
-                if (!error) {
-                    if (result) {
-						DOM.elid("opstatus").value = "On";
-					} else if (!result) {
-						DOM.elid("opstatus").value = "Off";
-                    }
-					DOM.elid('switch-operational').disabled = false;
+            contract.isOperational((error, result) => {
+				console.log(result);
+                if (error) {
+					console.log(error)
 				}
+				else if (result == true) {
+					DOM.elid("opstatus").value = "On";
+				} 
+				else {
+					DOM.elid("opstatus").value = "Off";
+				}
+				DOM.elid('switch-operational').disabled = false;
 			})
         });		
 
         DOM.elid('switch-operational').addEventListener('click', () => {
-            contract.isOperational(async (error, result) => {
-                if (!error) {
-                    if (result) {
-                        contract.setOperatingStatus(false);
-						DOM.elid("opstatus").value = "Off";
-                    } else if (!result) {
-                        contract.setOperatingStatus(true);
-						DOM.elid("opstatus").value = "On";
-                    }
+            contract.isOperational((error, result) => {
+                if (error) {
+					console.log(error)
+				}
+                else if (result == true) {
+                    contract.setOperatingStatus(false);
+					DOM.elid("opstatus").value = "Off";
+                } else {
+                    contract.setOperatingStatus(true);
+					DOM.elid("opstatus").value = "On";
                 }
             });
         });
@@ -56,9 +60,14 @@ import './flightsurety.css';
 		  }
 		}
 		
-        DOM.elid('btn-reg-airline').addEventListener('click', () => {
-			let address = DOM.elid('reg-flightid').value;
-            contract.registerAirline(address);
+        DOM.elid('btn-reg-airline').addEventListener('click', async() => {
+			let address = DOM.elid('inp-reg-airline').value;
+            contract.registerAirline(address);//await 
+			/*	.then(await contract.isAirlineRegistered(DOM.elid('inp-reg-airline').value))
+				.then(p => console.log(p));*/
+			DOM.elid("opstatus").value = "On";
+			DOM.elid('switch-operational').disabled = false;
+			console.log("airline registered");
         });
 				
 		// Fund airline		
@@ -74,7 +83,7 @@ import './flightsurety.css';
 		}
 
 		DOM.elid('btn-fund-airline').addEventListener('click', () => {
-            contract.airlineInitialFunding();
+            contract.airlineInitialFunding(DOM.elid('inp-fund-airline').value);
         });
 		
 		// Register flight
@@ -103,12 +112,12 @@ import './flightsurety.css';
 		
 		// Buy insurance
 		DOM.elid('ins-flightid').addEventListener('input', enableBuy);
-		DOM.elid('funding-amount').addEventListener('input', enableBuy);
+		DOM.elid('ins-amount').addEventListener('input', enableBuy);
 		
 		function enableBuy(e) {
-		  if (DOM.elid('funding-amount').value.length > 0) {
+		  if (DOM.elid('ins-amount').value.length > 0) {
 			if (DOM.elid('ins-flightid').value.length > 0) { 
-				  DOM.elid('btn-buy-insurance').disabled = false;
+				DOM.elid('btn-buy-insurance').disabled = false;
 			}
 		  }
 		  else {
@@ -119,7 +128,7 @@ import './flightsurety.css';
         DOM.elid('btn-buy-insurance').addEventListener('click', () => {
 			let flightId = DOM.elid('ins-flightid').value;
 			let amount = DOM.elid('ins-amount').value;
-            contract.buyInsurance(flight, amount);
+            contract.buyInsurance(flightId, amount);
         });			
 		
 		// Withdraw funds
@@ -141,6 +150,15 @@ import './flightsurety.css';
                 }
             });
         });		
+
+        /*// User-submitted transaction
+        DOM.elid('submit-oracle').addEventListener('click', () => {
+            let flight = DOM.elid('flight-number').value;
+            // Write transaction
+            contract.fetchFlightStatus(flight, (error, result) => {
+                display('Oracles', 'Trigger oracles', [ { label: 'Fetch Flight Status', error: error, value: result.flight + ' ' + result.timestamp} ]);
+            });
+        })*/
     
     });
     
