@@ -4,7 +4,7 @@ const fs = require('fs');
 
 module.exports = function(deployer) {
 
-    let firstAirline = '0x1bC9DeDD1A9D83D00E21Ff6621fFdc15a6C3490d';//'0xf17f52151EbEF6C7334FAD080c5704D77216b732';
+    let firstAirline = '0x992c59c95b5dD1CB889f3Ff16108cD94b4e22B9e'; // write first address here 
     deployer.deploy(FlightSuretyData,firstAirline)
     .then(() => {
         return deployer.deploy(FlightSuretyApp,FlightSuretyData.address)
@@ -14,7 +14,8 @@ module.exports = function(deployer) {
                             url: 'http://localhost:8545',
                             dataAddress: FlightSuretyData.address,
                             appAddress: FlightSuretyApp.address,
-							numOracles: 50
+							numOracles: 50,
+							gas: 67219759
                         }
                     }
                     fs.writeFileSync(__dirname + '/../src/dapp/config.json',JSON.stringify(config, null, '\t'), 'utf-8');
