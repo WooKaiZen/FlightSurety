@@ -19,7 +19,7 @@ const Web3 = require('web3');
 		// Operational status
         DOM.elid('check-operational').addEventListener('click', () => {
             contract.isOperational((error, result) => {
-				console.log(result);
+				console.log("operational:",result);
                 if (error) {
 					console.log(error)
 				}
@@ -34,12 +34,13 @@ const Web3 = require('web3');
         });		
 
         DOM.elid('switch-operational').addEventListener('click', () => {
-            contract.isOperational((error, result) => {
+            contract.isOperational(async (error, result) => {
+				console.log(result);
                 if (error) {
 					console.log(error)
 				}
                 else if (result == true) {
-                    contract.setOperatingStatus(false);
+                    await contract.setOperatingStatus(false);
 					DOM.elid("opstatus").value = "Off";
                 } else {
                     contract.setOperatingStatus(true);
@@ -150,15 +151,6 @@ const Web3 = require('web3');
                 }
             });
         });		
-
-        /*// User-submitted transaction
-        DOM.elid('submit-oracle').addEventListener('click', () => {
-            let flight = DOM.elid('flight-number').value;
-            // Write transaction
-            contract.fetchFlightStatus(flight, (error, result) => {
-                display('Oracles', 'Trigger oracles', [ { label: 'Fetch Flight Status', error: error, value: result.flight + ' ' + result.timestamp} ]);
-            });
-        })*/
     
     });
     
