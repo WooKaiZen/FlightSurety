@@ -76,10 +76,10 @@ contract('Flight Surety Tests', async (accounts) => {
 
   // Airline can be funded
   it('(airline) can be funded using fund()', async () => {
-    let amount = web3.utils.toWei('10', 'ether');
+    //let amount = web3.utils.toWei('10', 'ether');
 	
     try {
-        await config.flightSuretyData.fund(config.firstAirline,amount);
+        await config.flightSuretyData.fund(config.firstAirline);//,amount);
     }
     catch(e) {
 		
