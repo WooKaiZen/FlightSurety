@@ -27,6 +27,7 @@ contract FlightSuretyData {
 	
 	uint256 nbAirlinesRegistered = 0;
 	mapping(address => Airline) airlines;
+	address[] registeredAirlines;
 	mapping(string => uint256) registrationTimestamp; // flightId => timestamp
 	mapping(bytes32 => Flight) flights; // flightKey => flight
 	mapping(address => mapping(string => uint256)) passengerPayments; // passengerAddress => flightId => payment
@@ -229,8 +230,13 @@ contract FlightSuretyData {
 							requireIsOperational
     {
 		airlines[airlineAddress] = Airline(true,false,0);
+		registeredAirlines.push(airlineAddress);
 		nbAirlinesRegistered += 1;
     }
+	
+	function getRegisteredAirlines() external view returns(address[]) {
+		return registeredAirlines;
+	}						
 
    /**
     * @dev Register a flight
