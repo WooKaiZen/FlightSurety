@@ -15,16 +15,20 @@ export default class Contract {
         this.account = null;
         this.airlines = [];
         this.passengers = [];
+		this.config = config;
     }
 
     initialize(callback) {
-        this.web3.eth.getAccounts((error, accts) => {
+        this.web3.eth.getAccounts(async (error, accts) => {
            
-            this.owner = accts[0];
+            this.owner = await accts[0];
 			console.log("Owner:",this.owner);
-			this.account = accts[1];
+			this.account = await accts[1];
 
             let counter = 1;
+			
+			this.airlines = [];//await this.flightSuretyData.methods.getRegisteredAirlines().call({ from: self.owner});
+			//console.log(this.airlines.length);
             
             while(this.airlines.length < 5) {
 				console.log("Airline:",accts[counter]);
@@ -43,47 +47,88 @@ export default class Contract {
         let self = this;
         self.flightSuretyApp.methods
             .isOperational()
-            .call({ from: self.owner}, callback);
+            .call({ from: self.owner, gas: 4712388, gasPrice: 100000000000}, callback);
     }
 	
 	setOperatingStatus(mode, callback) {
 		let self = this;
 		self.flightSuretyData.methods
             .setOperatingStatus(mode)
-            .call({ from: self.owner}, callback);
+            .send({ from: self.owner, gas: 4712388, gasPrice: 100000000000})//, callback);
+			.on('error', function(error, receipt) { 
+				console.log(error);
+			});
 	}
 	
 	async registerAirline(airline, callback) {
+		console.log("Registering:",airline);
 		let self = this;
 		await self.flightSuretyApp.methods
             .registerAirline(airline)
-            .call({ from: this.Account}, callback);
+            .send({ from: self.owner, gas: this.config.gas})//, callback);
+			.on('error', function(error, receipt) { 
+				console.log(error);
+			});
 			/*.then(await self.flightSuretyData.methods.isRegistered(airline)
 			.call({ from: this.Account}, callback)
 			.then(p=>console.log(p)));*/
+		self.isAirlineRegistered(airline);
 	}
 	
-	/*isAirlineRegistered(airline, callback) {
+	async isAirlineRegistered(airline, callback) {
 		let self = this;
-		let reg = await self.flightSuretyData.methods.isRegistered(airline);
-		return reg;
-	}*/
+		await self.flightSuretyData.methods
+			.isRegistered(airline)
+			.call({ from: self.owner, gas: this.config.gas}, callback)
+			.then(reg=>console.log("registered:",reg));
+	}
+	
+	async isAirlineFunded(airline,callback) {
+		let self = this;
+		await self.flightSuretyData.methods
+			.isFunded(airline)
+			.call({ from: self.owner, gas: this.config.gas}, callback)
+			.then(funded=>console.log("funded:",funded));
+	}
 	
 	async airlineInitialFunding(airline, callback) {
+		console.log("Funding:",airline);
 		let self = this;
-		self.flightSuretyData.methods
-            .fund(airline, this.web3.utils.toWei("10", "ether").toString())
-            .call({ from: this.Account}, callback);			
+		try {
+			self.flightSuretyData.methods
+				.fund(airline, this.web3.utils.toWei("10", "ether").toString())
+				.send({ from: self.owner, gas: this.config.gas})//, callback);
+				.on('error', function(error, receipt) { 
+					console.log(error);
+				})
+		} catch(e) {
+			console.log(e);
+		}
+		self.isAirlineRegistered(airline);
+		self.isAirlineFunded(airline);			
 		/*await self.flightSuretyData.methods.isRegistered(airline)
 			.call({ from: this.Account}, callback);*/
 		//	.then(b=>console.log(b));
 	}
 	
 	registerFlight(flightId, departureLocation, arrivalLocation, callback) {
+		console.log("Registering flight:",flightId);
 		let self = this;
 		self.flightSuretyApp.methods
             .registerFlight(flightId,departureLocation,arrivalLocation)
-            .call({ from: this.Account}, callback);			
+            .send({ from: this.account, gas: this.config.gas})//, callback);
+			.on('error', function(error, receipt) { 
+				console.log(error);
+			})	
+		self.isFlightRegistered(flightId);
+	}
+	
+	async isFlightRegistered(flightId, callback) {
+		let self = this;
+		let reg = await self.flightSuretyData.methods
+			.isFlightRegistered(flightId)
+			.call({ from: self.owner}, callback);
+		console.log("registered:",reg);
 	}
 
     fetchFlightStatus(flightId, callback) {
@@ -97,7 +142,7 @@ export default class Contract {
             .fetchFlightStatus(payload.airline, payload.flight, payload.timestamp)
             .send({ from: self.owner}, (error, result) => {
                 callback(error, payload);
-            });
+        });
     }
 	
 	buyInsurance(flight, amount, callback) {
@@ -105,20 +150,26 @@ export default class Contract {
 		console.log(flight,this.web3.utils.toWei(amount, "ether").toString());
         self.flightSuretyData.methods
             .buyInsurance(flight,this.web3.utils.toWei(amount, "ether").toString())
-            .call({ from: self.owner}, callback);
+            .send({ from: this.account, gas: this.config.gas})//, callback);
+			.on('error', function(error, receipt) { 
+				console.log(error);
+			})	
 	}
 	
 	getWithdrawableFunds(callback) {
 		let self = this;
 		self.flightSuretyData.methods
             .getWithdrawableFunds()
-            .call({ from: this.Account}, callback);			
+            .call({ from: this.account}, callback);			
 	}
 	
 	withdrawPayoutFunds(flightId, callback) {
 		let self = this;
 		self.flightSuretyData.methods
             .withdrawPayoutFunds()
-            .call({ from: this.Account}, callback);			
+            .send({ from: this.account, gas: this.config.gas})//, callback);
+			.on('error', function(error, receipt) { 
+				console.log(error);
+			})				
 	}
 }
